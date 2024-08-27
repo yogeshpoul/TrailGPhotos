@@ -2,9 +2,12 @@ const express = require('express')
 const cors = require('cors');
 const app = express();
 const zod = require("zod");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 // const router = require('./rootRouter')
 const port =  3000
 app.use(cors());
+const { User, userPhotos } = require('./models');
 
 app.use(express.json())
 // app.use('/api/v1', router)
@@ -23,8 +26,11 @@ app.post('/signup',async (request,response)=>{
   try {
     signupBody.parse(request.body);
     const hashedPassword = await bcrypt.hash(password, 10)
+    
     const newUser = await User.create({ name, email, password: hashedPassword });
-    const token = jwt.sign({ userId: newUser.email }, process.env.JWT_SECRET);
+    console.log("name",newUser);
+
+    const token = jwt.sign({ userId: newUser.email }, "myJWT");
     response.status(201).json({
       message: "User created successfully",
       token: token
@@ -44,7 +50,7 @@ const signinBody = zod.object({
   email: zod.string().email(),
   password: zod.string().min(3, 'Password must be at least 3 characters long')
 })
-router.post('/signin', async (request, response) => {
+app.post('/signin', async (request, response) => {
     const { email, password } = request.body;
     try {
       signinBody.parse(request.body);
@@ -56,7 +62,7 @@ router.post('/signin', async (request, response) => {
       if (!passwordMatch) {
         return response.status(401).json({ error: "Enter correct Password" });
       }
-      const token = jwt.sign({ userId: user.email }, process.env.JWT_SECRET);
+      const token = jwt.sign({ userId: user.email }, "myJWT");
       response.status(200).json({
         message: 'Sign-in successful',
         token: token,
