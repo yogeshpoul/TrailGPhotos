@@ -2,7 +2,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 
-const sequelize = new Sequelize("postgresql://postgres.dijhkbzbjjwxbnjzmvnm:Yavgesh@123@aws-0-ap-south-1.pooler.supabase.com:6543/postgres", {
+const sequelize = new Sequelize("postgres://default:nOYZHXFb53tI@ep-purple-rain-a4t59pyl-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require", {
   dialect: 'postgres',
   // other options
 });
